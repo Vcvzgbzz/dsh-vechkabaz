@@ -32,3 +32,8 @@
 - insert:
     - id: vechkabaz-web
       name: dsh-vechkabaz
+
+# The first-run popup asks for a DeepSeek key; the vechkabaz key goes on Settings → Models.
+- id: ui-settings-models
+  config:
+    credentialOnboarding: false
