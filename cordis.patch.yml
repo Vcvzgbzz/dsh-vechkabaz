@@ -8,10 +8,17 @@
         baseURL: https://ai.vechkabaz.com/api/v1
         apiKeyEnv: VECHKABAZ_API_KEY
         headers:
-          User-Agent: dsh-vechkabaz/0.1.0
+          User-Agent: dsh-vechkabaz/0.2.1
         compat:
           supportsDeveloperRole: false
           maxTokensField: max_tokens
+        # The server runs 3 requests per account at once; parallel subagents wait for a slot (~5 min).
+        retryPolicy:
+          mode: normal
+          maxRetries: 25
+          backoff:
+            initialDelayMs: 1000
+            maxDelayMs: 15000
         models:
           - id: coder-max
             name: coder-max
