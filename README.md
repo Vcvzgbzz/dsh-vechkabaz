@@ -1,7 +1,9 @@
 # dsh-vechkabaz
 
-DeepSeek Harness (`dsh`) bundle for ai.vechkabaz.com: adds the `coder-max` model and points
-`web_search` / `web_fetch` at the server (dsh's default search needs a DeepSeek API key).
+DeepSeek Harness (`dsh`) bundle for ai.vechkabaz.com: adds the `coder-max` model, points
+`web_search` / `web_fetch` at the server (dsh's default search needs a DeepSeek API key), and
+adds memory: the same notes the pi package keeps, recalled per turn and saved with the `memory`
+tool or picked up from finished sessions. Memory only runs on models hosted on the server itself.
 
 ## Install (no terminal)
 

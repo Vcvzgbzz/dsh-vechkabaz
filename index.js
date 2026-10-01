@@ -2,31 +2,43 @@
 export const name = 'vechkabaz-web'
 export const inject = ['web']
 
-const BASE = 'https://ai.vechkabaz.com/api/v1'
+export const BASE = 'https://ai.vechkabaz.com/api/v1'
 const KEY_REF = 'VECHKABAZ_API_KEY'
-const UA = 'dsh-vechkabaz/0.1.0'
+const UA = 'dsh-vechkabaz/0.2.0'
 
-export function apply(ctx) {
+/** Authenticated JSON calls to the server; the key resolves through dsh's credential store per call. */
+export function client(ctx) {
   const key = async () => {
     const creds = ctx.get('credentials')
     const value = creds ? (await creds.resolve(KEY_REF))?.value : process.env[KEY_REF]
-    if (!value) throw new Error(`${KEY_REF} is not set — add it in Settings or export it`)
+    if (!value) throw new Error(`${KEY_REF} is not set — add it in Settings → Models → Vechkabaz`)
     return value
   }
-  const api = async (path, signal) => {
+  return async (path, { method = 'GET', body, headers, signal } = {}) => {
     const res = await fetch(BASE + path, {
-      headers: { Authorization: `Bearer ${await key()}`, 'User-Agent': UA },
+      method,
+      headers: {
+        Authorization: `Bearer ${await key()}`, 'User-Agent': UA,
+        ...body === undefined ? {} : { 'Content-Type': 'application/json' },
+        ...headers,
+      },
+      body: body === undefined ? undefined : JSON.stringify(body),
       signal,
     })
-    if (!res.ok) throw new Error(`vechkabaz ${path.split('?')[0]}: HTTP ${res.status} ${(await res.text()).slice(0, 200)}`)
-    return res.json()
+    const out = await res.json().catch(() => ({}))
+    if (!res.ok) throw Object.assign(new Error(out?.error?.message ?? `vechkabaz ${path.split('?')[0]}: HTTP ${res.status}`), { status: res.status })
+    return out
   }
+}
+
+export function apply(ctx) {
+  const api = client(ctx)
 
   ctx.web.registerSearchProvider({
     id: 'vechkabaz',
     available: () => true,
     async search({ query }, signal) {
-      const r = await api(`/search?q=${encodeURIComponent(query)}`, signal)
+      const r = await api(`/search?q=${encodeURIComponent(query)}`, { signal })
       return { sources: r.results.map(h => ({ url: h.url, title: h.title, snippet: h.snippet })), truncated: false }
     },
   })
@@ -35,7 +47,7 @@ export function apply(ctx) {
     id: 'vechkabaz',
     available: () => true,
     async fetch({ url }, signal) {
-      const r = await api(`/fetch?url=${encodeURIComponent(url)}`, signal)
+      const r = await api(`/fetch?url=${encodeURIComponent(url)}`, { signal })
       return { url: r.final_url ?? url, statusCode: 200, body: { kind: 'text', content: r.text }, truncated: false }
     },
   })

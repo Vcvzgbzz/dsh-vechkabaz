@@ -37,3 +37,7 @@
 - id: ui-settings-models
   config:
     credentialOnboarding: false
+
+- insert:
+    - id: vechkabaz-memory
+      name: dsh-vechkabaz/memory.js
