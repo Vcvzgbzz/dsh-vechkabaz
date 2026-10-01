@@ -1,0 +1,34 @@
+# Model route: dsh's built-in pi-ai adapter pointed at the OpenAI-compatible API.
+- id: llm-pi-ai
+  config:
+    providers:
+      vechkabaz:
+        displayName: Vechkabaz
+        api: openai-completions
+        baseURL: https://ai.vechkabaz.com/api/v1
+        apiKeyEnv: VECHKABAZ_API_KEY
+        headers:
+          User-Agent: dsh-vechkabaz/0.1.0
+        compat:
+          supportsDeveloperRole: false
+          maxTokensField: max_tokens
+        models:
+          - id: coder-max
+            name: coder-max
+            contextWindow: 131072
+            maxTokens: 32768
+
+- id: agent-default-model
+  config:
+    provider: vechkabaz
+    model: coder-max
+
+# Base defaults to DeepSeek search, which needs a DEEPSEEK_API_KEY.
+- id: web
+  config:
+    searchProvider: vechkabaz
+    fetchProvider: vechkabaz
+
+- insert:
+    - id: vechkabaz-web
+      name: dsh-vechkabaz

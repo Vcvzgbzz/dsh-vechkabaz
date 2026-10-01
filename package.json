@@ -1,0 +1,11 @@
+{
+  "name": "dsh-vechkabaz",
+  "version": "0.1.0",
+  "description": "DeepSeek Harness bundle for ai.vechkabaz.com: coder-max provider + web search/fetch",
+  "type": "module",
+  "main": "index.js",
+  "files": ["index.js", "cordis.patch.yml"],
+  "keywords": ["dsh-plugin"],
+  "license": "MIT",
+  "dsh": { "bundle": { "patch": "./cordis.patch.yml" } }
+}
