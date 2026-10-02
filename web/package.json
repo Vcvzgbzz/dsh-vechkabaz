@@ -1,0 +1,7 @@
+{
+  "name": "dsh-vechkabaz-web",
+  "private": true,
+  "type": "module",
+  "main": "index.js",
+  "description": "web_search and web_fetch through ai.vechkabaz.com. Off hides both tools."
+}

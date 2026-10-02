@@ -11,6 +11,11 @@ tool or picked up from finished sessions. Memory only runs on models hosted on t
 2. Paste `github:Vcvzgbzz/dsh-vechkabaz` → **Install** → **Enable now**.
 3. Open **Settings → Models → Vechkabaz**, paste your API key from ai.vechkabaz.com, save.
 
+## Turning features on and off
+
+**Plugins → dsh-vechkabaz** lists Web search, Subagents and Memory, each with its own switch.
+Off hides those tools from the model right away, open sessions included.
+
 ## Install (terminal)
 
 ```sh

@@ -1,13 +1,15 @@
 {
   "name": "dsh-vechkabaz",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "DeepSeek Harness bundle for ai.vechkabaz.com: coder-max provider, web search/fetch, memory",
   "type": "module",
   "main": "index.js",
   "files": [
     "index.js",
-    "memory.js",
-    "cordis.patch.yml"
+    "cordis.patch.yml",
+    "web",
+    "memory",
+    "subagents"
   ],
   "keywords": [
     "dsh-plugin"
@@ -21,5 +23,18 @@
   "peerDependencies": {
     "@deepseek-ai/dsh-llm": "*",
     "@deepseek-ai/dsh-tools": "*"
+  },
+  "exports": {
+    ".": "./index.js",
+    "./package.json": "./package.json",
+    "./web": "./web/index.js",
+    "./web/package.json": "./web/package.json",
+    "./web/locale/*": "./web/locale/*",
+    "./subagents": "./subagents/index.js",
+    "./subagents/package.json": "./subagents/package.json",
+    "./subagents/locale/*": "./subagents/locale/*",
+    "./memory": "./memory/index.js",
+    "./memory/package.json": "./memory/package.json",
+    "./memory/locale/*": "./memory/locale/*"
   }
 }

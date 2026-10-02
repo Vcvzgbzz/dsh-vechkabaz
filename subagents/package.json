@@ -1,0 +1,7 @@
+{
+  "name": "dsh-vechkabaz-subagents",
+  "private": true,
+  "type": "module",
+  "main": "index.js",
+  "description": "Lets the agent start helper agents. Off hides the subagent tools."
+}

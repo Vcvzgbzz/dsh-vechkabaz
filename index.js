@@ -1,10 +1,10 @@
-// web_search / web_fetch backends served by ai.vechkabaz.com/api/v1/{search,fetch}.
-export const name = 'vechkabaz-web'
-export const inject = ['web']
+// Core: the server client, plus hiding the tools of any feature whose switch is off.
+// Each feature is its own row (web/, memory/, subagents/) with its own switch on the Plugins page.
+export const name = 'vechkabaz'
 
 export const BASE = 'https://ai.vechkabaz.com/api/v1'
 const KEY_REF = 'VECHKABAZ_API_KEY'
-const UA = 'dsh-vechkabaz/0.2.2'
+const UA = 'dsh-vechkabaz/0.3.0'
 
 /** Authenticated JSON calls to the server; the key resolves through dsh's credential store per call. */
 export function client(ctx) {
@@ -31,24 +31,34 @@ export function client(ctx) {
   }
 }
 
+/** Features whose rows are mounted right now; a switched-off row runs no code, so the core hides its tools. */
+export const features = new Set()
+
+/** Mark a feature on for as long as its row is mounted. */
+export function feature(ctx, id) {
+  features.add(id)
+  ctx.effect(() => () => features.delete(id))
+}
+
+const TOOLS = {
+  web: ['web_search', 'web_fetch'],
+  subagents: ['subagent', 'subagent_fork', 'list_agents', 'send_message', 'interrupt_agent', 'subagent_codex', 'subagent_claude_code'],
+}
+
+const offTools = () => new Set(Object.entries(TOOLS).flatMap(([id, names]) => features.has(id) ? [] : names))
+
+export const inject = ['tools']
+
 export function apply(ctx) {
-  const api = client(ctx)
-
-  ctx.web.registerSearchProvider({
-    id: 'vechkabaz',
-    available: () => true,
-    async search({ query }, signal) {
-      const r = await api(`/search?q=${encodeURIComponent(query)}`, { signal })
-      return { sources: r.results.map(h => ({ url: h.url, title: h.title, snippet: h.snippet })), truncated: false }
-    },
+  // Hidden from the model at each prompt assembly: this reaches tools a session registers for
+  // itself (the web app's `subagent`), which tools.restrict() cannot.
+  ctx.on('system-prompt/assemble', async (_assembly, _context, next) => {
+    const assembled = await next()
+    const off = offTools()
+    return off.size ? { ...assembled, tools: assembled.tools.filter(t => !off.has(t.name)) } : assembled
   })
-
-  ctx.web.registerFetchProvider({
-    id: 'vechkabaz',
-    available: () => true,
-    async fetch({ url }, signal) {
-      const r = await api(`/fetch?url=${encodeURIComponent(url)}`, { signal })
-      return { url: r.final_url ?? url, statusCode: 200, body: { kind: 'text', content: r.text }, truncated: false }
-    },
-  })
+  // Backstop for a call to a hidden tool.
+  ctx.tools.guard(exec => offTools().has(exec.name)
+    ? `${exec.name} is switched off (Plugins → dsh-vechkabaz).`
+    : undefined)
 }

@@ -8,7 +8,7 @@
         baseURL: https://ai.vechkabaz.com/api/v1
         apiKeyEnv: VECHKABAZ_API_KEY
         headers:
-          User-Agent: dsh-vechkabaz/0.2.2
+          User-Agent: dsh-vechkabaz/0.3.0
         compat:
           supportsDeveloperRole: false
           maxTokensField: max_tokens
@@ -36,15 +36,18 @@
     searchProvider: vechkabaz
     fetchProvider: vechkabaz
 
+# Each feature is its own row, so the bundle's page on the Plugins screen shows a switch per feature.
 - insert:
-    - id: vechkabaz-web
+    - id: vechkabaz
       name: dsh-vechkabaz
+    - id: web-search
+      name: dsh-vechkabaz/web
+    - id: subagents
+      name: dsh-vechkabaz/subagents
+    - id: memory
+      name: dsh-vechkabaz/memory
 
 # The first-run popup asks for a DeepSeek key; the vechkabaz key goes on Settings → Models.
 - id: ui-settings-models
   config:
     credentialOnboarding: false
-
-- insert:
-    - id: vechkabaz-memory
-      name: dsh-vechkabaz/memory.js

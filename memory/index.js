@@ -7,7 +7,7 @@ import { createHash } from 'node:crypto'
 import { basename } from 'node:path'
 import { createUserMessage } from '@deepseek-ai/dsh-llm'
 import { defineTool } from '@deepseek-ai/dsh-tools'
-import { client } from './index.js'
+import { client } from '../index.js'
 
 export const name = 'vechkabaz-memory'
 export const inject = ['tools']
