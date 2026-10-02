@@ -100,16 +100,34 @@ export function apply(ctx) {
   // Server models with `owned_by: "local"`; anything unconfirmed counts as off-box.
   let onBox = new Set()
   let onBoxAt = 0
+  let onBoxError = ''
   const refreshOnBox = async () => {
     if (Date.now() - onBoxAt < 10 * 60_000) return
     try {
-      const r = await api('/models', { signal: AbortSignal.timeout(8_000) })
+      const r = await api('/models', { signal: AbortSignal.timeout(20_000) })
       onBox = new Set((r.data ?? []).filter(m => m?.owned_by === 'local').map(m => String(m.id)))
       onBoxAt = Date.now()
-    } catch {}
+      onBoxError = ''
+    } catch (e) {
+      onBoxError = e.message
+    }
   }
-  const eligible = agent => !agent.session.header.parentSession
-    && agent.options?.provider === PROVIDER && onBox.has(agent.options?.model)
+  // The route the agent last actually sent; the model picker reroutes requests without touching options.
+  const routeOf = agent => agent.session.requestHeader?.()?.config ?? agent.options ?? {}
+  /** Why memory is off for this agent, or '' when it is on. */
+  const refusal = (agent) => {
+    if (!agent) return 'no calling agent'
+    if (agent.session.header.parentSession) return 'subagents don\'t use memory; the main session does'
+    const { provider, model } = routeOf(agent)
+    if (provider !== PROVIDER) return `the current model is ${provider}/${model}, not a vechkabaz model`
+    if (!onBox.has(model)) {
+      return onBoxError
+        ? `couldn't confirm ${model} runs on ai.vechkabaz.com's own hardware (${onBoxError})`
+        : `${model} doesn't run on ai.vechkabaz.com's own hardware, so notes aren't shared with it`
+    }
+    return ''
+  }
+  const eligible = agent => refusal(agent) === ''
 
   // Per-session turn state for provenance and extraction.
   const state = new Map()
@@ -209,9 +227,8 @@ export function apply(ctx) {
     async execute(args, exec) {
       const agent = exec.agent
       await refreshOnBox()
-      if (!agent || !eligible(agent)) {
-        return 'Memory is off here: it only works in the main session on a vechkabaz model that runs on ai.vechkabaz.com\'s own hardware.'
-      }
+      const why = refusal(agent)
+      if (why) return `Memory is off here: ${why}.`
       const s = stateOf(agent.session.header.id)
       s.project ||= projectKey(agent.session.header.cwd ?? process.cwd())
       const project = s.project

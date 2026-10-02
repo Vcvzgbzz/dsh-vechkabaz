@@ -8,7 +8,7 @@
         baseURL: https://ai.vechkabaz.com/api/v1
         apiKeyEnv: VECHKABAZ_API_KEY
         headers:
-          User-Agent: dsh-vechkabaz/0.2.1
+          User-Agent: dsh-vechkabaz/0.2.2
         compat:
           supportsDeveloperRole: false
           maxTokensField: max_tokens

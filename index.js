@@ -4,7 +4,7 @@ export const inject = ['web']
 
 export const BASE = 'https://ai.vechkabaz.com/api/v1'
 const KEY_REF = 'VECHKABAZ_API_KEY'
-const UA = 'dsh-vechkabaz/0.2.1'
+const UA = 'dsh-vechkabaz/0.2.2'
 
 /** Authenticated JSON calls to the server; the key resolves through dsh's credential store per call. */
 export function client(ctx) {
