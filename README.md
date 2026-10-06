@@ -7,6 +7,11 @@ tool or picked up from finished sessions. Memory only runs on models hosted on t
 
 ## Install (no terminal)
 
+**Windows: install Git first.** dsh fetches `github:` plugins with git, and Windows doesn't
+ship with it. Without git the install fails with "The plugin could not be installed". Get
+[Git for Windows](https://git-scm.com/download/win) (default options are fine), then quit dsh
+completely and reopen it so it sees git. macOS and Linux usually have git already.
+
 1. In DeepSeek Harness, click **Plugins** in the sidebar → **Add plugin**.
 2. Paste `github:Vcvzgbzz/dsh-vechkabaz` → **Install** → **Enable now**.
 3. Open **Settings → Models → Vechkabaz**, paste your API key from ai.vechkabaz.com, save.
